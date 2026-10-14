@@ -1,0 +1,326 @@
+[
+ {
+  "seed": 7,
+  "name": "Atotes denendasus",
+  "eyes": "sleepy",
+  "versions": [
+   {
+    "file": "7_colourA.glb",
+    "label": "Colour A"
+   },
+   {
+    "file": "7_colourB.glb",
+    "label": "Colour B"
+   },
+   {
+    "file": "7_colourC.glb",
+    "label": "Colour C"
+   },
+   {
+    "file": "7_wild1.glb",
+    "label": "Wildcard: twin tail"
+   },
+   {
+    "file": "7_wild2.glb",
+    "label": "Wildcard: fluffy + crown"
+   }
+  ]
+ },
+ {
+  "seed": 11,
+  "name": "Aphomis mani",
+  "eyes": "round",
+  "versions": [
+   {
+    "file": "11_colourA.glb",
+    "label": "Colour A"
+   },
+   {
+    "file": "11_colourB.glb",
+    "label": "Colour B"
+   },
+   {
+    "file": "11_colourC.glb",
+    "label": "Colour C"
+   },
+   {
+    "file": "11_wild1.glb",
+    "label": "Wildcard: giant eyes"
+   },
+   {
+    "file": "11_wild2.glb",
+    "label": "Wildcard: chubby + fluffy"
+   }
+  ]
+ },
+ {
+  "seed": 19,
+  "name": "Anopthys furladens",
+  "eyes": "wide",
+  "versions": [
+   {
+    "file": "19_colourA.glb",
+    "label": "Colour A"
+   },
+   {
+    "file": "19_colourB.glb",
+    "label": "Colour B"
+   },
+   {
+    "file": "19_colourC.glb",
+    "label": "Colour C"
+   },
+   {
+    "file": "19_wild1.glb",
+    "label": "Wildcard: fluffy"
+   },
+   {
+    "file": "19_wild2.glb",
+    "label": "Wildcard: giant eyes + crown"
+   }
+  ]
+ },
+ {
+  "seed": 31,
+  "name": "Acamis nesa",
+  "eyes": "lashes",
+  "versions": [
+   {
+    "file": "31_colourA.glb",
+    "label": "Colour A"
+   },
+   {
+    "file": "31_colourB.glb",
+    "label": "Colour B"
+   },
+   {
+    "file": "31_colourC.glb",
+    "label": "Colour C"
+   },
+   {
+    "file": "31_wild1.glb",
+    "label": "Wildcard: crown"
+   },
+   {
+    "file": "31_wild2.glb",
+    "label": "Wildcard: twin tail + long fins"
+   }
+  ]
+ },
+ {
+  "seed": 58,
+  "name": "Ahus birisus",
+  "eyes": "beady",
+  "versions": [
+   {
+    "file": "58_colourA.glb",
+    "label": "Colour A"
+   },
+   {
+    "file": "58_colourB.glb",
+    "label": "Colour B"
+   },
+   {
+    "file": "58_colourC.glb",
+    "label": "Colour C"
+   },
+   {
+    "file": "58_wild1.glb",
+    "label": "Wildcard: long fins"
+   },
+   {
+    "file": "58_wild2.glb",
+    "label": "Wildcard: twin tail + giant eyes"
+   }
+  ]
+ },
+ {
+  "seed": 77,
+  "name": "Aphanio arilati",
+  "eyes": "lashes",
+  "versions": [
+   {
+    "file": "77_colourA.glb",
+    "label": "Colour A"
+   },
+   {
+    "file": "77_colourB.glb",
+    "label": "Colour B"
+   },
+   {
+    "file": "77_colourC.glb",
+    "label": "Colour C"
+   },
+   {
+    "file": "77_wild1.glb",
+    "label": "Wildcard: chubby"
+   },
+   {
+    "file": "77_wild2.glb",
+    "label": "Wildcard: giant eyes + long fins"
+   }
+  ]
+ },
+ {
+  "seed": 123,
+  "name": "Alropdon matidata",
+  "eyes": "wide",
+  "versions": [
+   {
+    "file": "123_colourA.glb",
+    "label": "Colour A"
+   },
+   {
+    "file": "123_colourB.glb",
+    "label": "Colour B"
+   },
+   {
+    "file": "123_colourC.glb",
+    "label": "Colour C"
+   },
+   {
+    "file": "123_wild1.glb",
+    "label": "Wildcard: twin tail"
+   },
+   {
+    "file": "123_wild2.glb",
+    "label": "Wildcard: crown + fluffy"
+   }
+  ]
+ },
+ {
+  "seed": 404,
+  "name": "Eugon docialis",
+  "eyes": "wide",
+  "versions": [
+   {
+    "file": "404_colourA.glb",
+    "label": "Colour A"
+   },
+   {
+    "file": "404_colourB.glb",
+    "label": "Colour B"
+   },
+   {
+    "file": "404_colourC.glb",
+    "label": "Colour C"
+   },
+   {
+    "file": "404_wild1.glb",
+    "label": "Wildcard: giant eyes"
+   },
+   {
+    "file": "404_wild2.glb",
+    "label": "Wildcard: long fins + crown"
+   }
+  ]
+ },
+ {
+  "seed": 777,
+  "name": "Permepogrus hagama",
+  "eyes": "grumpy",
+  "versions": [
+   {
+    "file": "777_colourA.glb",
+    "label": "Colour A"
+   },
+   {
+    "file": "777_colourB.glb",
+    "label": "Colour B"
+   },
+   {
+    "file": "777_colourC.glb",
+    "label": "Colour C"
+   },
+   {
+    "file": "777_wild1.glb",
+    "label": "Wildcard: fluffy"
+   },
+   {
+    "file": "777_wild2.glb",
+    "label": "Wildcard: giant eyes + long fins"
+   }
+  ]
+ },
+ {
+  "seed": 1234,
+  "name": "Centtochus allarus",
+  "eyes": "sleepy",
+  "versions": [
+   {
+    "file": "1234_colourA.glb",
+    "label": "Colour A"
+   },
+   {
+    "file": "1234_colourB.glb",
+    "label": "Colour B"
+   },
+   {
+    "file": "1234_colourC.glb",
+    "label": "Colour C"
+   },
+   {
+    "file": "1234_wild1.glb",
+    "label": "Wildcard: crown"
+   },
+   {
+    "file": "1234_wild2.glb",
+    "label": "Wildcard: fluffy + long fins"
+   }
+  ]
+ },
+ {
+  "seed": 2024,
+  "name": "Thophapisnius arsus",
+  "eyes": "round",
+  "versions": [
+   {
+    "file": "2024_colourA.glb",
+    "label": "Colour A"
+   },
+   {
+    "file": "2024_colourB.glb",
+    "label": "Colour B"
+   },
+   {
+    "file": "2024_colourC.glb",
+    "label": "Colour C"
+   },
+   {
+    "file": "2024_wild1.glb",
+    "label": "Wildcard: long fins"
+   },
+   {
+    "file": "2024_wild2.glb",
+    "label": "Wildcard: giant eyes + fluffy"
+   }
+  ]
+ },
+ {
+  "seed": 9001,
+  "name": "Lomanoscus corboinida",
+  "eyes": "round",
+  "versions": [
+   {
+    "file": "9001_colourA.glb",
+    "label": "Colour A"
+   },
+   {
+    "file": "9001_colourB.glb",
+    "label": "Colour B"
+   },
+   {
+    "file": "9001_colourC.glb",
+    "label": "Colour C"
+   },
+   {
+    "file": "9001_wild1.glb",
+    "label": "Wildcard: chubby"
+   },
+   {
+    "file": "9001_wild2.glb",
+    "label": "Wildcard: fluffy + giant eyes"
+   }
+  ]
+ }
+]

@@ -251,10 +251,11 @@ def crest(bm, col, shape, pal, tall=1.0, start=0.1, end=0.34, crown=False):
                 bands=[pal["gold"], pal["deep"], pal["gold"], pal["body"][0]] if crown else None)
 
 
-def build(seed, index, origin, variant="common", wild=()):
+def build(seed, index, origin, variant="common", wild=(), pal_index=None):
+    """pal_index picks the palette without changing the face, which `index` also seeds."""
     data = json.loads((DATA / f"fish_{seed}.json").read_text())
     rng = random.Random(seed)
-    pal = PALETTES[index % len(PALETTES)]
+    pal = PALETTES[(index if pal_index is None else pal_index) % len(PALETTES)]
     if variant == "colour":
         pal = PALETTES[(index + 3) % len(PALETTES)]
     elif RARES.get(variant):

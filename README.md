@@ -52,9 +52,28 @@ Sheets are written to `art/pinata/fishdraw/`.
 Rare variants: golden, midnight, albino, rainbow. Wildcard traits: twin tail, giant eyes, fluffy, crown,
 long fins, chubby.
 
+## A dozen, and a fishbowl
+
+`tools/build_dozen.py` takes twelve seeds and makes each one in three colourways and two wildcards: one with a
+single odd trait, one with two stacked.
+
+![A dozen fish, five versions each](samples/dozen_named.jpg)
+
+```
+blender --background --python tools/build_dozen.py -- --mode sheet      # art/pinata/fishdraw/dozen.png
+python tools/label_sheet.py dozen
+blender --background --python tools/build_dozen.py -- --mode export     # bowl/fish/*.glb(.txt) + index.json
+```
+
+`bowl/index.html` is a three.js fishbowl that the twelve swim around in. Tap a fish to change its version,
+sprinkle food for them to chase, or shuffle them all. Serve the folder over HTTP to open it
+(`python -m http.server` inside `bowl/`). Fish load from `fish/*.glb.txt`, base64 copies of the Draco-compressed
+GLBs, because some hosts (Claude artifacts among them) do not serve `.glb`. `bowl/draco/draco_decoder.js` is the
+Draco decoder shipped with three.js (Apache-2.0).
+
 ## What is not here yet
 
-- The fish are render-only. Nothing exports a game-ready model.
+- Nothing exports a game-ready model yet. The fishbowl GLBs are for viewing: no rig, no LODs.
 - `tools/pinata_skin.py` (a painted skin with shells and edge fringe, used for other creatures) is included
   but the fish do not use it yet.
 - `tools/build_pinata_koi.py` is the first hand-tuned koi the generator grew out of; the generator imports

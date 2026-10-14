@@ -5,3 +5,5 @@ art/pinata/fishdraw/*.png
 art/pinata/fishdraw/*.jpg
 art/pinata/fishdraw/sheet.json
 *.blend1
+bowl/fish/*.glb
+art/pinata/fishdraw/dozen.json
