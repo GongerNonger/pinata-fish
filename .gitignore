@@ -1,0 +1,7 @@
+/fishdraw/
+__pycache__/
+art/pinata/skins/
+art/pinata/fishdraw/*.png
+art/pinata/fishdraw/*.jpg
+art/pinata/fishdraw/sheet.json
+*.blend1
