@@ -1,7 +1,10 @@
 """A dozen fish, each in three colourways and two wildcards, as a sheet and as GLBs for the fishbowl.
 
-    blender --background --python tools/build_dozen.py -- --mode sheet [--samples 64]
-    blender --background --python tools/build_dozen.py -- --mode export
+    blender --background --python tools/build_dozen.py -- --mode sheet [--samples 64] [--style legacy]
+    blender --background --python tools/build_dozen.py -- --mode export [--style legacy]
+
+style   pinata (default): the piñata shape and each seed's own pattern recipe (tools/pinata_patterns.py);
+        legacy: fishdraw's outline and the original blobs-and-bands markings
 
 sheet   renders art/pinata/fishdraw/dozen.png (+ dozen.json for tools/label_sheet.py dozen)
 export  writes bowl/fish/<seed>_<variant>.glb (+ .glb.txt, base64, which bowl/index.html loads) and bowl/fish/index.json
@@ -24,6 +27,7 @@ K = F.K
 SEEDS = [7, 11, 19, 31, 58, 77, 123, 404, 777, 1234, 2024, 9001]
 TRAITS = ["twin tail", "giant eyes", "fluffy", "crown", "long fins", "chubby"]
 BOWL = K.ROOT / "bowl" / "fish"
+STYLE = {"form": "pinata", "coat": "auto"}
 
 
 def versions():
@@ -51,7 +55,7 @@ def sheet(samples):
     placed = []
     for i, (seed, index, variant, wild, pal) in enumerate(cells):
         origin = Vector(((i % cols - (cols - 1) / 2) * dx, 0, -(i // cols) * dz))
-        name, _ = F.build(seed, index, origin, "common", wild, pal_index=pal)
+        name, _, _ = F.build(seed, index, origin, "common", wild, pal_index=pal, **STYLE)
         label = f"{name}" if variant == "colour A" else ("Wildcard: " + " + ".join(wild) if wild else variant[0].upper() + variant[1:])
         placed.append((label, origin))
         print("built", seed, variant, wild, flush=True)
@@ -80,7 +84,7 @@ def export():
         entry = None
         for seed, index, variant, wild, pal in rows:
             bpy.ops.wm.read_factory_settings(use_empty=True)
-            name, style = F.build(seed, index, Vector((0, 0, 0)), "common", wild, pal_index=pal)
+            name, style, _ = F.build(seed, index, Vector((0, 0, 0)), "common", wild, pal_index=pal, **STYLE)
             # the paper colours live in "Col"; unless it is the active colour layer the exporter writes a blank COLOR_0
             for me in bpy.data.meshes:
                 if "Col" in me.color_attributes:
@@ -107,6 +111,8 @@ def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     mode = argv[argv.index("--mode") + 1] if "--mode" in argv else "sheet"
     samples = int(argv[argv.index("--samples") + 1]) if "--samples" in argv else 64
+    if "--style" in argv and argv[argv.index("--style") + 1] == "legacy":
+        STYLE.update(form="fishdraw", coat=None)
     sheet(samples) if mode == "sheet" else export()
 
 

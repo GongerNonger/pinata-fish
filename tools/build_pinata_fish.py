@@ -28,12 +28,14 @@ import bpy  # noqa: E402
 from mathutils import Vector  # noqa: E402
 
 import build_pinata_koi as K  # noqa: E402
+import pinata_patterns as P  # noqa: E402
 
 DATA = K.ROOT / "art" / "pinata" / "fishdraw"
 LENGTH = 3.6
 NOSE = 0.14                              # the front of the head is rebuilt as a rounded cap up to here
 BASE_ROWS, BASE_W, BASE_LEN = K.ROWS, 0.11, 0.36
 COLOUR_AT = K.colour_at
+HEAD_COLOUR = K.head_colour
 
 # body (two shades), marking (two shades), and the three accents that go with them
 PALETTES = [
@@ -95,7 +97,78 @@ class Shape:
         return mid0 + (mid - mid0) * 0.3, max(0.004, h0 * math.sqrt(max(0.0, 1 - u * u)))
 
 
-def install(shape, pal, fat=1.0, fluffy=False):
+def _smooth(vals, passes):
+    for _ in range(passes):
+        vals = [(vals[max(i - 1, 0)] + 2 * vals[i] + vals[min(i + 1, len(vals) - 1)]) / 4 for i in range(len(vals))]
+    return vals
+
+
+def _bump(t, at, width):
+    return math.exp(-((t - at) / width) ** 2)
+
+
+PINATA_FRINGE0, PINATA_EYE_T = 0.25, 0.17                   # a piñata's face is a big smooth painted head
+
+
+class PinataShape(Shape):
+    """fishdraw's outline made into a piñata: smoothed, fuller (thin designs gain most), a bigger head, a belly
+    that hangs lower than the back rises, a flatter mid-line, and a tail stock left narrow so the tail still
+    reads as a tail. `full` is the half-height at the fullest point as a share of length; fishdraw's own fish
+    run from about 0.09 to 0.2."""
+    def __init__(self, data, full=0.21):
+        super().__init__(data)
+        n = len(self.cols)
+        mids = _smooth([(c["top"] + c["bot"]) / 2 for c in self.cols], 4)
+        hs = _smooth([(c["top"] - c["bot"]) / 2 for c in self.cols], 4)
+        hmax, mean = max(hs), sum(mids) / n
+        cols = []
+        for i, (m, h) in enumerate(zip(mids, hs)):
+            t = i / (n - 1)
+            f = (h / hmax) ** 0.55 * full * (1 + 0.16 * _bump(t, 0.2, 0.13))
+            g = min(1.0, max(0.0, (t - 0.5) / 0.47))           # a teardrop: full to halfway, then easing into the stock
+            f = max(f * (1 - g ** 1.6), max(h, 0.04))
+            belly = 0.3 * f * _bump(t, 0.46, 0.2) * (1 - g)
+            m = m * 0.5 + mean * 0.5
+            cols.append({"top": m + f, "bot": m - f - belly})
+        self.cols = cols
+        self.hmax = max((c["top"] - c["bot"]) / 2 for c in cols)
+
+    NOSE = 0.26                                             # a long round cap: a face, not a snout or a can lid
+
+    def at(self, t):
+        if t >= self.NOSE:
+            return self.raw(t)
+        mid0, h0 = self.raw(self.NOSE)
+        mid, _ = self.raw(t)
+        u = 1 - t / self.NOSE
+        return mid0 + (mid - mid0) * 0.3, max(0.004, h0 * math.sqrt(max(0.0, 1 - u * u)))
+
+
+def remap(data, old, new):
+    """Move fishdraw's fins and eye onto a reshaped body: a point inside the old outline keeps its place across
+    the body; a point outside keeps its distance from the outline, so fins keep their size."""
+    def move(t, z):
+        mo, ho = old.at(min(max(t, 0), 1))
+        mn, hn = new.at(min(max(t, 0), 1))
+        # the new outline is not symmetric about its mid-line (the belly), so work from its real top and bottom
+        top_o, bot_o = mo + ho, mo - ho
+        top_n, bot_n = mn + hn, mn - hn
+        if z > top_o:
+            return t, top_n + (z - top_o)
+        if z < bot_o:
+            return t, bot_n - (bot_o - z)
+        u = (z - bot_o) / max(top_o - bot_o, 1e-6)
+        return t, bot_n + u * (top_n - bot_n)
+    out = dict(data)
+    out["fins"] = {key: ([[list(move(*pt)) for pt in poly] for poly in val] if key == "median" else ([list(move(*pt)) for pt in val] if val else val))
+                   for key, val in data["fins"].items()}
+    if data.get("eye"):
+        t, z, r = data["eye"]
+        out["eye"] = (*move(t, z), r)
+    return out
+
+
+def install(shape, pal, fat=1.0, fluffy=False, round_=False):
     """Point the koi script's shape and colour hooks at this fish."""
     def frame(t):
         mid, _ = shape.at(t)
@@ -108,6 +181,8 @@ def install(shape, pal, fat=1.0, fluffy=False):
         _, h = shape.at(t)
         tail = min(1.0, math.sqrt(max(0.02, (1 - t) / 0.07)))        # round off the tail stock
         h = max(0.03, h * LENGTH * tail) * fat
+        if round_:                                                   # a piñata is nearly round in section
+            return max(0.03, min(h * 0.92, 0.3 * LENGTH * fat)), h
         return max(0.03, min(h * 0.8, 0.22 * LENGTH * fat)), h
 
     K.L, K.frame, K.radii = LENGTH, frame, radii
@@ -251,8 +326,11 @@ def crest(bm, col, shape, pal, tall=1.0, start=0.1, end=0.34, crown=False):
                 bands=[pal["gold"], pal["deep"], pal["gold"], pal["body"][0]] if crown else None)
 
 
-def build(seed, index, origin, variant="common", wild=(), pal_index=None):
-    """pal_index picks the palette without changing the face, which `index` also seeds."""
+def build(seed, index, origin, variant="common", wild=(), pal_index=None, form="fishdraw", coat=None):
+    """pal_index picks the palette without changing the face, which `index` also seeds.
+    form: "fishdraw" (the outline as drawn) or "pinata" (PinataShape, with fins and eye moved to fit).
+    coat: None for the original blobs-and-bands markings, "auto" for a pattern recipe chosen from the seed
+    (tools/pinata_patterns.py), or a pinata_patterns.Recipe."""
     data = json.loads((DATA / f"fish_{seed}.json").read_text())
     rng = random.Random(seed)
     pal = PALETTES[(index if pal_index is None else pal_index) % len(PALETTES)]
@@ -261,13 +339,32 @@ def build(seed, index, origin, variant="common", wild=(), pal_index=None):
     elif RARES.get(variant):
         pal = RARES[variant]
     shape = Shape(data)
-    install(shape, pal, fat=1.45 if "chubby" in wild else 1.0, fluffy="fluffy" in wild)
+    if form == "pinata":
+        shape, data = PinataShape(data), data
+        data = remap(data, Shape(data), shape)
+        if data.get("eye"):                                 # bring the eyes forward onto the smooth painted face
+            t, z, r = data["eye"]
+            t2 = min(t, PINATA_EYE_T)
+            (m, h), (m2, h2) = shape.at(t), shape.at(t2)
+            data["eye"] = (t2, m2 + (z - m) / h * h2, r)
+    K.FRINGE0 = PINATA_FRINGE0 if form == "pinata" else 0.17
+    install(shape, pal, fat=(1.3 if form == "pinata" else 1.45) if "chubby" in wild else 1.0, fluffy="fluffy" in wild, round_=form == "pinata")
     eye = data["eye"] or (0.18, 0.0, 0.03)
     c, d, side, up = K.frame(max(eye[0], NOSE * 0.9))
     w, h = K.radii(max(eye[0], NOSE * 0.9))
     K.EYE_T, K.EYE_PHI = max(eye[0], NOSE * 0.9), math.asin(max(-0.5, min(0.75, (eye[1] * LENGTH - c.z) / h)))
     K.rng = random.Random(seed + 7)
-    if variant == "rainbow":
+    recipe = None
+    if coat is not None:
+        recipe = coat if isinstance(coat, P.Recipe) else P.Recipe.from_seed(seed)
+
+        def paint(role, row):
+            if variant == "rainbow" and role in ("body", "body2", "mark", "mark2"):
+                return colorsys.hsv_to_rgb((row / K.ROWS * 1.4 + (0.5 if role.startswith("mark") else 0)) % 1.0, 0.78, 1.0)
+            return P.colour(pal, role, row)
+        K.colour_at = lambda _coat, t, phi, row, k=0: paint(recipe.role(t, phi, row, k), row)
+        K.head_colour = lambda _coat, t, phi: paint(recipe.face_role(t, phi), 0)
+    elif variant == "rainbow":
         def rainbow(coat, t, phi, row, k=0):
             got = COLOUR_AT(coat, t, phi, row, k)
             return colorsys.hsv_to_rgb((row / K.ROWS * 1.4) % 1.0, 0.78, 1.0) if got in K.WHITE or got in K.RED else got
@@ -275,7 +372,7 @@ def build(seed, index, origin, variant="common", wild=(), pal_index=None):
     else:
         K.colour_at = COLOUR_AT
     body = K.build_fish(Markings(rng))
-    K.colour_at = COLOUR_AT
+    K.colour_at, K.head_colour = COLOUR_AT, HEAD_COLOUR
     paper = body.data.materials[0]
 
     bm = bmesh.new()
@@ -302,7 +399,7 @@ def build(seed, index, origin, variant="common", wild=(), pal_index=None):
     extras.data.materials.append(paper)
     extras.parent = body
     body.location = origin
-    return data["name"], style
+    return data["name"], style, recipe
 
 
 def sheet(scene, out, cells, cols, view=(0, -1, 0), dx=6.0, dz=3.9):
@@ -312,7 +409,7 @@ def sheet(scene, out, cells, cols, view=(0, -1, 0), dx=6.0, dz=3.9):
     placed = []
     for i, (seed, index, variant, wild) in enumerate(cells):
         origin = Vector(((i % cols - (cols - 1) / 2) * dx, 0, -(i // cols) * dz))
-        name, style = build(seed, index, origin, variant, wild)
+        name, style, _ = build(seed, index, origin, variant, wild)
         label = "Wildcard: " + " + ".join(wild) if wild else {"common": f"{name} ({seed})", "colour": "Colour variant"}.get(variant, "Rare: " + variant)
         placed.append((label, origin))
         print("built", seed, variant, wild)

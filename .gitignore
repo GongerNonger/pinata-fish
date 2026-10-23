@@ -7,3 +7,6 @@ art/pinata/fishdraw/sheet.json
 *.blend1
 bowl/fish/*.glb
 art/pinata/fishdraw/dozen.json
+art/pinata/fishdraw/shapes.json
+art/pinata/fishdraw/patterns.json
+art/pinata/fishdraw/recipes.json

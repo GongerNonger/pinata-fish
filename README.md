@@ -57,6 +57,11 @@ long fins, chubby.
 `tools/build_dozen.py` takes twelve seeds and makes each one in three colourways and two wildcards: one with a
 single odd trait, one with two stacked.
 
+They use the **piñata shape** (fishdraw's outline made fuller and rounder, with a big painted head) and each
+seed's own **coat pattern** recipe, drawn from a set of bases, accents and faces. Both are described in
+[docs/PATTERNS.md](docs/PATTERNS.md), with a catalogue sheet (`tools/pattern_sheet.py`). Pass `--style legacy`
+for the original look.
+
 ![A dozen fish, five versions each](samples/dozen_named.jpg)
 
 ```

@@ -26,6 +26,7 @@ STAGE = int(os.environ.get("PIN_STAGE", "4"))
 L = 3.4                      # nose to tail root, studs
 HALF = L * 0.175             # half-width at the widest point
 ROWS = 22
+FRINGE0 = 0.17               # where the fringe starts; ahead of it the head is smooth, painted paper
 STRIP_W = 0.105
 STRIP_LEN = 0.38
 
@@ -232,7 +233,7 @@ def build_fish(coat, origin=Vector((0, 0, 0))):
     bm = bmesh.new()
     col = bm.loops.layers.color.new("Col")
     for row in range(ROWS):
-        t = 0.17 + row / (ROWS - 1) * 0.8
+        t = FRINGE0 + row / (ROWS - 1) * (0.97 - FRINGE0)
         c, d, side, up = frame(t)
         w, h = radii(t)
         n = max(9, int(math.tau * (w + h) / 2 / STRIP_W * 1.5))
